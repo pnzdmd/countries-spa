@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
@@ -10,7 +10,15 @@ function App() {
   return (
     <>
       <Header />
-      <Main></Main>
+      <Main>
+        <Switch>
+          <Route exact path='/'>
+            <HomePages />
+          </Route>
+          <Route path='/country/:name' component={Details} />
+          <Route component={NotFound} />
+        </Switch>
+      </Main>
     </>
   );
 }

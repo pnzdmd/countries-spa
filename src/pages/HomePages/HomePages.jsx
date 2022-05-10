@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Controls from '../../components/Controls/Controls';
 import List from '../../components/List/List';
@@ -8,6 +9,8 @@ import { ALL_COUNTRIES } from '../../config';
 
 const HomePages = () => {
   const [countries, setCountries] = useState([]);
+
+  const { push } = useHistory();
 
   useEffect(() => {
     axios.get(ALL_COUNTRIES).then(({ data }) => setCountries(data));
@@ -36,7 +39,13 @@ const HomePages = () => {
               },
             ],
           };
-          return <Card key={c.name} {...countryInfo} />;
+          return (
+            <Card
+              key={c.name}
+              onClick={() => push(`/country/${c.name}`)}
+              {...countryInfo}
+            />
+          );
         })}
       </List>
     </>

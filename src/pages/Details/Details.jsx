@@ -1,5 +1,5 @@
-const Details = () => {
-  return <div>Details</div>;
+const Details = ({ match }) => {
+  return <div>Details {match.params.name}</div>;
 };
 
 export default Details;
