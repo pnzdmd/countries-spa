@@ -1,48 +1,63 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Controls from '../../components/Controls/Controls';
 import List from '../../components/List/List';
 import Card from '../../components/Card/Card';
 import { ALL_COUNTRIES } from '../../config';
 
-const HomePages = () => {
-  const [countries, setCountries] = useState([]);
+const HomePages = ({ countries, setCountries }) => {
+  const [filtredCountries, setFiltredCountries] = useState(countries);
 
-  const { push } = useHistory();
+  const navigate = useNavigate();
+
+  const handleSearch = (search, region) => {
+    let data = [...countries];
+    if (region) {
+      data = data.filter((countries) => countries.region.includes(region));
+    }
+
+    if (search) {
+      data = data.filter((countries) =>
+        countries.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    setFiltredCountries(data);
+  };
 
   useEffect(() => {
-    axios.get(ALL_COUNTRIES).then(({ data }) => setCountries(data));
+    if (!countries.length)
+      axios.get(ALL_COUNTRIES).then(({ data }) => setCountries(data));
   }, []);
 
   return (
     <>
-      <Controls />
+      <Controls onSearch={handleSearch} />
       <List>
-        {countries.map((c) => {
+        {filtredCountries.map((country) => {
           const countryInfo = {
-            img: c.flags.png,
-            name: c.name,
+            img: country.flags.png,
+            name: country.name,
             info: [
               {
                 title: 'Population',
-                description: c.population.toLocaleString(),
+                description: country.population.toLocaleString(),
               },
               {
                 title: 'Region',
-                description: c.region,
+                description: country.region,
               },
               {
                 title: 'Capital',
-                description: c.capital,
+                description: country.capital,
               },
             ],
           };
           return (
             <Card
-              key={c.name}
-              onClick={() => push(`/country/${c.name}`)}
+              key={country.name}
+              onClick={() => navigate(`/country/${country.name}`)}
               {...countryInfo}
             />
           );
