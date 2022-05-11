@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { filterByCode } from '../../config';
 
 const Wrapper = styled.section`
@@ -98,10 +99,18 @@ const Info = (props) => {
     navigate,
   } = props;
 
+  const [neighbors, setNeighbors] = useState([]);
+
+  useEffect(() => {
+    if (borders.length)
+      axios
+        .get(filterByCode(borders))
+        .then(({ data }) => setNeighbors(data.map((b) => b.name)));
+  }, [borders]);
+
   return (
     <Wrapper>
       <InfoImage src={flag} alt={name} />
-
       <div>
         <InfoTitle>{name}</InfoTitle>
         <ListGroup>
@@ -149,8 +158,13 @@ const Info = (props) => {
             <span>There is no border</span>
           ) : (
             <TagGroup>
-              {borders.map((border) => (
-                <Tag key={border}>{border}</Tag>
+              {neighbors.map((border) => (
+                <Tag
+                  key={border}
+                  onClick={() => navigate(`/country/${border}`)}
+                >
+                  {border}
+                </Tag>
               ))}
             </TagGroup>
           )}
